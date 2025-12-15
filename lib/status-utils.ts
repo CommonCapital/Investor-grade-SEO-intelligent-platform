@@ -46,7 +46,7 @@ export function getProgressBarStyle(status: string | undefined): string {
 export function getReportTitle(status: string | undefined): string {
     switch (status) {
         case 'completed':
-          return 'Report Rewady!';
+          return 'Report Ready!';
         case 'failed':
           return "Report Failed";
         default:

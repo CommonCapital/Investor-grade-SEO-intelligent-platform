@@ -4,10 +4,9 @@ import {v} from 'convex/values';
 import {openai} from "@ai-sdk/openai";
 import {generateObject} from 'ai';
 import {buildAnalysisPrompt, systemPrompt} from "@/prompts/gpt";
-import { seoReportSchema
 
- } from '@/lib/seo-schema';
  import { internal, api } from './_generated/api';
+import { investorDashboardSchema } from '@/lib/seo-schema';
 
 
 
@@ -55,16 +54,16 @@ import { seoReportSchema
                 model: openai("gpt-5"),
                 system: systemPrompt(),
                 prompt: analysisPrompt,
-                schema: seoReportSchema,
+                schema: investorDashboardSchema,
             });
 
            console.log("SEO report generated successfully:", {
-  entity_name: seoReport.meta.entity_name,
-  entity_type: seoReport.meta.entity_type,
-  confidence_score: seoReport.meta.confidence_score,
-  total_sources: seoReport.inventory.total_sources,
-  recommendations_count: seoReport.recommendations?.length || 0,
-  summary_score: seoReport.summary?.overall_score || 0,
+entity: seoReport.run_metadata.entity,
+mode: seoReport.run_metadata.mode,
+metric_revisions: seoReport.delta_summary.metric_revisions,
+executive_summary: seoReport.executive_summary.key_facts,
+scenarios: seoReport.scenarios,
+risks: seoReport.risks,
 });
 
 

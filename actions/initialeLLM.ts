@@ -5,8 +5,9 @@ import { Id } from "@/convex/_generated/dataModel";
 import { auth } from "@clerk/nextjs/server";
 import { ConvexHttpClient } from "convex/browser";
 import retryAnalysisOnly from "./retryAnalysisOnly";
-import { buildPerplexityPrompt } from "@/prompts/perplexity";
+
 import { ApiPath } from "@/lib/constant";
+import { buildInvestorSeaSearchPrompt } from "@/prompts/perplexity";
 
 export async function initiateLLM(prompt: string, existingJobId?: string, country = "US") {
     if (!process.env.BRIGHTDATA_API_KEY) {
@@ -74,7 +75,7 @@ const encodeEndpoint = encodeURIComponent(ENDPOINT);
  const url = `https://api.brightdata.com/datasets/v3/trigger?dataset_id=${process.env.BRIGHTDATA_DATASET_ID}&endpoint=${encodeEndpoint}&format=json&uncompressed_webhook=true&include_errors=true`
 
 
- const perplexityPrompt = buildPerplexityPrompt(prompt);
+ const perplexityPrompt = buildInvestorSeaSearchPrompt(prompt);
  try {
     const response = await fetch(url, {
         method: "POST",

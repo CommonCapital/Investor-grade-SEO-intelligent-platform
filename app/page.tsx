@@ -1,71 +1,129 @@
 "use client";
 
-import {
-  Authenticated,
-  Unauthenticated,
-  useMutation,
-  useQuery,
-} from "convex/react";
-import { api } from "../convex/_generated/api";
-import Link from "next/link";
-import { SignUpButton } from "@clerk/nextjs";
-import { SignInButton } from "@clerk/nextjs";
-import { UserButton } from "@clerk/nextjs";
+import { useState } from "react";
+import { Authenticated, Unauthenticated } from "convex/react";
+import { SignInButton, UserButton } from "@clerk/nextjs";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, BarChart3, CheckCircle, Clock, Menu, Rocket, Search, Shield, Sparkle, Star, TrendingUp, Users, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useState } from "react";
+import { 
+  ArrowRight, 
+  Search,
+  CheckCircle, 
+  TrendingUp, 
+  Shield,
+  FileText,
+  BarChart3,
+  Menu,
+  X,
+  Building2,
+  Eye
+} from "lucide-react";
 
-
-
-export default function Home() {
- const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+export default function SEOIntelligenceLanding() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-blue-950 dark:to-purple-950">
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <header className="fixed top-0 w-full bg-white/95 backdrop-blur-sm border-b border-black/10 z-50">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="text-xl font-light tracking-tight">MUSEDATA</div>
+            
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center gap-8">
+              <a href="#reports" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity">Reports</a>
+              <a href="#insights" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity">Insights</a>
+              <a href="#pricing" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity">Pricing</a>
+              
+              <Unauthenticated>
+                <SignInButton mode="modal" forceRedirectUrl="/dashboard">
+                  <Button 
+                    size="sm"
+                    className="h-10 px-6 bg-black text-white hover:bg-white hover:text-black border-2 border-black transition-all duration-300 text-xs tracking-widest uppercase"
+                  >
+                    Get Started
+                  </Button>
+                </SignInButton>
+              </Unauthenticated>
 
-      
+              <Authenticated>
+                <a href="/dashboard">
+                  <Button 
+                    size="sm"
+                    className="h-10 px-6 bg-black text-white hover:bg-white hover:text-black border-2 border-black transition-all duration-300 text-xs tracking-widest uppercase"
+                  >
+                    Dashboard
+                  </Button>
+                </a>
+                <UserButton  />
+              </Authenticated>
+            </nav>
+
+            {/* Mobile Menu Button */}
+            <button 
+              className="md:hidden p-2"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Navigation */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-black/10 bg-white">
+            <div className="px-4 py-4 space-y-3">
+              <a href="#reports" className="block text-sm tracking-wide uppercase">Reports</a>
+              <a href="#insights" className="block text-sm tracking-wide uppercase">Insights</a>
+              <a href="#pricing" className="block text-sm tracking-wide uppercase">Pricing</a>
+              <Unauthenticated>
+                <SignInButton mode="modal" forceRedirectUrl="/dashboard">
+                  <Button className="w-full bg-black text-white hover:bg-white hover:text-black border-2 border-black text-xs tracking-widest uppercase">
+                    Get Started
+                  </Button>
+                </SignInButton>
+              </Unauthenticated>
+              <Authenticated>
+                <a href="/dashboard" className="block">
+                  <Button className="w-full bg-black text-white hover:bg-white hover:text-black border-2 border-black text-xs tracking-widest uppercase">
+                    Dashboard
+                  </Button>
+                </a>
+              </Authenticated>
+            </div>
+          </div>
+        )}
+      </header>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10" />
-        
-        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-32 lg:px-8">
-          <div className="text-center">
-            <Badge className="mb-4 bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-blue-700 dark:text-blue-300 border border-blue-500/30">
-              <Sparkle className="w-3 h-3 mr-1 text-yellow-500" />
-              AI-powered SEO Assistant
-            </Badge>
+      <section className="pt-32 pb-20 sm:pt-40 sm:pb-32">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl">
+            <div className="mb-6">
+              <Badge className="bg-black text-white hover:bg-black/90 text-xs tracking-widest uppercase border-0">
+                SEO Intelligence for Investors
+              </Badge>
+            </div>
 
-            <h1 className="text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl space-y-2">
-              <span className="block bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 dark:from-white dark:via-blue-200 dark:to-white bg-clip-text text-transparent">
-                Generate Beautiful
-              </span>
-              <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                SEO Reports
-              </span>
-              <span className="block bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 dark:from-white dark:via-blue-200 dark:to-white bg-clip-text text-transparent">
-                in Seconds
-              </span>
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light leading-[1.1] tracking-tight mb-8">
+              Instant SEO Reports on Any Public Company
             </h1>
 
-            <p className="mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-slate-600 dark:text-slate-300">
-              Harness the power of Perplexity to create comprehensive reports instantly.
-              <span className="text-slate-900 dark:text-white font-medium">
-                {" "}Fast, simple, structured, and insightful.
-              </span>
+            <p className="text-xl sm:text-2xl font-light leading-relaxed text-black/70 mb-12 max-w-3xl">
+              AI-powered competitive intelligence for investors. 
+              Search visibility, keyword rankings, and digital presence analysis in seconds.
             </p>
 
-            <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <div className="flex flex-col sm:flex-row gap-4">
               <Unauthenticated>
                 <SignInButton mode="modal" forceRedirectUrl="/dashboard">
                   <Button
                     size="lg"
-                    className="text-base px-8 py-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="h-14 px-8 bg-black text-white hover:bg-white hover:text-black border-2 border-black transition-all duration-300 text-sm tracking-widest uppercase"
                   >
-                    <Search className="w-5 h-5 mr-2" />
-                    Generate My Report
+                    Generate Report
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </SignInButton>
@@ -75,9 +133,8 @@ export default function Home() {
                 <a href="/dashboard">
                   <Button
                     size="lg"
-                    className="text-base px-8 py-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="h-14 px-8 bg-black text-white hover:bg-white hover:text-black border-2 border-black transition-all duration-300 text-sm tracking-widest uppercase"
                   >
-                    <Search className="w-5 h-5 mr-2" />
                     Go to Dashboard
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
@@ -86,251 +143,431 @@ export default function Home() {
               
               <Button
                 size="lg"
-                className="text-base px-8 py-6 bg-white dark:bg-slate-800 text-slate-900 dark:text-white border-2 border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500 transition-all duration-300"
+                variant="outline"
+                className="h-14 px-8 bg-white text-black border-2 border-black hover:bg-black hover:text-white transition-all duration-300 text-sm tracking-widest uppercase"
               >
                 View Sample Report
               </Button>
             </div>
 
-            {/* Social Proof */}
-            <div className="mt-12 flex items-center justify-center gap-8 text-sm text-slate-600 dark:text-slate-400">
-              <div className="flex items-center gap-2">
-                <Users className="w-4 h-4" />
-                <span>10,000+ users</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Star className="w-4 h-4 text-yellow-500" />
-                <span>4.9/5 rating</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Zap className="w-4 h-4 text-blue-500" />
-                <span>50,000+ reports</span>
+            {/* Metrics */}
+            <div className="mt-16 pt-8 border-t border-black/10">
+              <div className="grid grid-cols-3 gap-8 max-w-2xl">
+                <div>
+                  <div className="text-3xl font-light mb-1">30 Sec</div>
+                  <div className="text-xs tracking-wider uppercase text-black/60">Report Generation</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-light mb-1">50K+</div>
+                  <div className="text-xs tracking-wider uppercase text-black/60">Companies Tracked</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-light mb-1">Real-Time</div>
+                  <div className="text-xs tracking-wider uppercase text-black/60">Data Updates</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Feature Highlights */}
-      <section className="py-20 sm:py-32">
+      {/* Problem Statement */}
+      <section id="reports" className="py-20 sm:py-32 bg-black/[0.02]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mx-auto text-slate-900 dark:text-white">
-              Choose your SEO Superpower
+          <div className="max-w-4xl mx-auto text-center mb-16">
+            <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight">
+              Due Diligence Shouldn't Take Weeks
             </h2>
-            <p className="mt-4 text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-              Whether you're just getting started or need advanced insights, we've got the perfect plan for you.
+            <p className="text-lg font-light text-black/70 leading-relaxed">
+              Investors waste time manually researching digital presence. 
+              Get comprehensive SEO intelligence instantly.
             </p>
           </div>
-
-          <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-            {/* Starter Plan Card */}
-            <Card className="relative overflow-hidden border-2 border-blue-200 dark:border-blue-800 hover:border-blue-400 dark:hover:border-blue-600 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/10 group bg-gradient-to-br from-blue-50/50 to-cyan-50/50 dark:from-blue-950/50 dark:to-cyan-950/50">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-full -translate-y-16 translate-x-16" />
-              
-              <CardHeader className="relative">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 text-white">
-                    <BarChart3 className="w-6 h-6" />
-                  </div>
-                  <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-300">
-                    Starter
-                  </Badge>
-                </div>
-                <CardTitle className="text-2xl text-slate-900 dark:text-white">
-                  Full SEO Reports
-                </CardTitle>
-                <CardDescription className="text-base">
-                  Generate comprehensive SEO Reports powered by Perplexity
-                </CardDescription>
-              </CardHeader>
-
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
-                    <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span>Complete SERP Analysis</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
-                    <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span>Keyword ranking insights</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
-                    <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span>Competitor analysis</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
-                    <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span>Export to PDF/CSV</span>
-                  </div>
-                </div>
-                
-                <Button className="w-full mt-6 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white">
-                  Get Started
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Premium Plan Card */}
-            <Card className="relative overflow-hidden border-2 border-purple-300 dark:border-purple-700 hover:border-purple-500 dark:hover:border-purple-500 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/20 group bg-gradient-to-br from-purple-50/80 via-pink-50/80 to-orange-50/80 dark:from-purple-950/80 dark:via-pink-950/80 dark:to-orange-950/80">
-              <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-purple-400/20 via-pink-400/20 to-orange-400/20 rounded-full -translate-y-20 translate-x-20" />
-              
-              <div className="absolute top-4 right-4">
-                <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold">
-                  <Sparkle className="w-3 h-3 mr-1" />
-                  Popular
-                </Badge>
-              </div>
-
-              <CardHeader className="relative">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 text-white">
-                    <Rocket className="w-6 h-6" />
-                  </div>
-                  <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-200 dark:bg-purple-900 dark:text-purple-300">
-                    Premium
-                  </Badge>
-                </div>
-                <CardTitle className="text-2xl text-slate-900 dark:text-white">
-                  Advanced SEO Suite
-                </CardTitle>
-                <CardDescription className="text-base">
-                  Everything in Starter, plus AI-powered insights and automation
-                </CardDescription>
-              </CardHeader>
-
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
-                    <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span className="font-medium">Everything in Starter</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
-                    <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span>AI Content Recommendations</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
-                    <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span>Automated Monitoring</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
-                    <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span>Priority Support</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
-                    <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span>White-label Reports</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
-                    <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span>API Access</span>
-                  </div>
-                </div>
-                
-                <Button className="w-full mt-6 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white shadow-lg">
-                  Upgrade to Premium
-                  <Sparkle className="w-4 h-4 ml-2" />
-                </Button>
-              </CardContent>
-            </Card>
+          
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <div className="text-center p-8 bg-white border border-black/10">
+              <div className="text-4xl font-light mb-3">5-7 Days</div>
+              <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Manual Research</div>
+              <p className="text-sm font-light text-black/70">
+                Traditional competitive analysis timelines
+              </p>
+            </div>
+            
+            <div className="text-center p-8 bg-white border border-black/10">
+              <div className="text-4xl font-light mb-3">12+ Tools</div>
+              <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Fragmented Data</div>
+              <p className="text-sm font-light text-black/70">
+                Multiple subscriptions for incomplete insights
+              </p>
+            </div>
+            
+            <div className="text-center p-8 bg-white border border-black/10">
+              <div className="text-4xl font-light mb-3">$15K+</div>
+              <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Monthly Cost</div>
+              <p className="text-sm font-light text-black/70">
+                Spent on SEO tools and analyst time
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section className="py-20 bg-white/50 dark:bg-slate-900/50">
+      {/* What You Get */}
+      <section id="insights" className="py-20 sm:py-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-slate-900 dark:text-white">
-              Why Choose Our Platform?
+          <div className="max-w-4xl mx-auto mb-20">
+            <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight">
+              Comprehensive SEO Intelligence
             </h2>
-            <p className="mt-4 text-lg text-slate-600 dark:text-slate-300">
-              Built for marketers, agencies, and businesses who value their time
+            <p className="text-lg font-light text-black/70 leading-relaxed">
+              AI-powered reports that give you complete visibility into any public company's digital presence and competitive positioning.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center group">
-              <div className="inline-flex p-4 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 text-white mb-4 group-hover:scale-110 transition-transform">
-                <Clock className="w-8 h-8" />
+          <div className="space-y-16 max-w-6xl mx-auto">
+            {/* Search Visibility Analysis */}
+            <div className="grid lg:grid-cols-2 gap-12 items-start">
+              <div>
+                <h3 className="text-2xl font-light mb-6 tracking-tight">
+                  Search Visibility Analysis
+                </h3>
+                <p className="text-base font-light text-black/70 leading-relaxed mb-6">
+                  Understand how any company appears in search results. Track keyword rankings, 
+                  organic traffic estimates, and SERP features across all major search engines.
+                </p>
+                <div className="space-y-3 text-sm font-light">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                    <span>Keyword ranking positions and trends</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                    <span>Organic traffic estimates and projections</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                    <span>SERP feature analysis (featured snippets, knowledge panels)</span>
+                  </div>
+                </div>
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-slate-900 dark:text-white">Lightning Fast</h3>
-              <p className="text-slate-600 dark:text-slate-400">
-                Generate comprehensive reports in under 30 seconds. No more waiting hours for data.
+              
+              <Card className="border-2 border-black/10 shadow-none">
+                <CardHeader>
+                  <CardTitle className="text-sm tracking-wider uppercase text-black/60 font-normal">
+                    Sample Visibility Metrics
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3 text-sm font-light">
+                    <div className="flex justify-between items-center py-2 border-b border-black/5">
+                      <span>Keyword Rankings</span>
+                      <span className="text-black/60">15,420 tracked</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-black/5">
+                      <span>Organic Traffic Est.</span>
+                      <span className="text-black/60">2.4M monthly</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-black/5">
+                      <span>Domain Authority</span>
+                      <span className="text-black/60">78/100</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2">
+                      <span>SERP Features</span>
+                      <span className="text-black/60">342 owned</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Competitive Intelligence */}
+            <div className="grid lg:grid-cols-2 gap-12 items-start">
+              <Card className="border-2 border-black/10 shadow-none lg:order-1">
+                <CardHeader>
+                  <CardTitle className="text-sm tracking-wider uppercase text-black/60 font-normal">
+                    Competitive Insights
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4 text-sm font-light">
+                    <div className="flex items-start gap-3 py-2">
+                      <Building2 className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <div className="font-normal mb-1">Direct Competitors</div>
+                        <div className="text-black/60 text-xs">Ranked by keyword overlap and traffic share</div>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3 py-2">
+                      <TrendingUp className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <div className="font-normal mb-1">Market Share Analysis</div>
+                        <div className="text-black/60 text-xs">Search visibility vs. competitors over time</div>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3 py-2">
+                      <Eye className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <div className="font-normal mb-1">Content Gap Analysis</div>
+                        <div className="text-black/60 text-xs">Keywords competitors rank for but target doesn't</div>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3 py-2">
+                      <BarChart3 className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <div className="font-normal mb-1">Growth Trajectories</div>
+                        <div className="text-black/60 text-xs">Historical trends and future projections</div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="lg:order-2">
+                <h3 className="text-2xl font-light mb-6 tracking-tight">
+                  Competitive Positioning
+                </h3>
+                <p className="text-base font-light text-black/70 leading-relaxed mb-6">
+                  Benchmark any company against their competitors. Identify market leaders, 
+                  emerging threats, and strategic opportunities in their digital landscape.
+                </p>
+                <div className="space-y-3 text-sm font-light">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                    <span>Competitor ranking and traffic benchmarks</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                    <span>Market share of voice analysis</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                    <span>Strategic content opportunities</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Technical & Content Analysis */}
+            <div className="grid lg:grid-cols-2 gap-12 items-start">
+              <div>
+                <h3 className="text-2xl font-light mb-6 tracking-tight">
+                  Technical & Content Analysis
+                </h3>
+                <p className="text-base font-light text-black/70 leading-relaxed mb-6">
+                  Deep dive into website architecture, backlink profiles, and content strategy. 
+                  Understand the technical foundation behind their search performance.
+                </p>
+                <div className="space-y-3 text-sm font-light">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                    <span>Backlink profile and authority distribution</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                    <span>Content strategy and topic coverage</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                    <span>Site speed and technical health metrics</span>
+                  </div>
+                </div>
+              </div>
+              
+              <Card className="border-2 border-black/10 shadow-none">
+                <CardHeader>
+                  <CardTitle className="text-sm tracking-wider uppercase text-black/60 font-normal">
+                    Technical Metrics
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3 text-sm font-light">
+                    <div className="flex justify-between items-center py-2 border-b border-black/5">
+                      <span>Total Backlinks</span>
+                      <span className="text-black/60">847K</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-black/5">
+                      <span>Referring Domains</span>
+                      <span className="text-black/60">12.3K</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-black/5">
+                      <span>Indexed Pages</span>
+                      <span className="text-black/60">45,280</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2">
+                      <span>Core Web Vitals</span>
+                      <span className="text-black/60">Good</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Who It's For */}
+      <section className="py-20 bg-black text-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight">
+              Built for Investment Professionals
+            </h2>
+            <p className="text-lg font-light text-white/70 leading-relaxed mb-12">
+              Fast, comprehensive SEO intelligence for informed investment decisions.
+            </p>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="p-8 border border-white/20 bg-white/5">
+                <div className="text-2xl font-light mb-2">Venture Capital</div>
+                <p className="text-sm font-light text-white/60">
+                  Assess digital traction and growth potential of portfolio targets
+                </p>
+              </div>
+              <div className="p-8 border border-white/20 bg-white/5">
+                <div className="text-2xl font-light mb-2">Private Equity</div>
+                <p className="text-sm font-light text-white/60">
+                  Due diligence on digital assets and market positioning
+                </p>
+              </div>
+              <div className="p-8 border border-white/20 bg-white/5">
+                <div className="text-2xl font-light mb-2">Hedge Funds</div>
+                <p className="text-sm font-light text-white/60">
+                  Real-time competitive intelligence for trading strategies
+                </p>
+              </div>
+              <div className="p-8 border border-white/20 bg-white/5">
+                <div className="text-2xl font-light mb-2">Investment Banks</div>
+                <p className="text-sm font-light text-white/60">
+                  Market analysis for M&A and advisory engagements
+                </p>
+              </div>
+              <div className="p-8 border border-white/20 bg-white/5">
+                <div className="text-2xl font-light mb-2">Research Analysts</div>
+                <p className="text-sm font-light text-white/60">
+                  Quantitative digital presence metrics for equity research
+                </p>
+              </div>
+              <div className="p-8 border border-white/20 bg-white/5">
+                <div className="text-2xl font-light mb-2">Corp Dev Teams</div>
+                <p className="text-sm font-light text-white/60">
+                  Strategic acquisition targets and partnership opportunities
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Report Features */}
+      <section className="py-20 sm:py-32 bg-black/[0.02]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center mb-16">
+            <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight">
+              Export-Ready Reports
+            </h2>
+            <p className="text-lg font-light text-black/70 leading-relaxed">
+              Professional reports formatted for investment committees and board presentations.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <div className="text-center p-8 bg-white border border-black/10">
+              <div className="inline-flex p-4 mb-4">
+                <FileText className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-light mb-3">PDF Export</h3>
+              <p className="text-sm font-light text-black/70">
+                Investor-grade reports with charts, tables, and executive summaries
               </p>
             </div>
 
-            <div className="text-center group">
-              <div className="inline-flex p-4 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 text-white mb-4 group-hover:scale-110 transition-transform">
-                <TrendingUp className="w-8 h-8" />
+            <div className="text-center p-8 bg-white border border-black/10">
+              <div className="inline-flex p-4 mb-4">
+                <BarChart3 className="w-8 h-8" />
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-slate-900 dark:text-white">Actionable Insights</h3>
-              <p className="text-slate-600 dark:text-slate-400">
-                AI-powered recommendations that actually move the needle on your rankings.
+              <h3 className="text-xl font-light mb-3">Excel Data</h3>
+              <p className="text-sm font-light text-black/70">
+                Raw data exports for custom analysis and modeling
               </p>
             </div>
 
-            <div className="text-center group">
-              <div className="inline-flex p-4 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white mb-4 group-hover:scale-110 transition-transform">
+            <div className="text-center p-8 bg-white border border-black/10">
+              <div className="inline-flex p-4 mb-4">
                 <Shield className="w-8 h-8" />
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-slate-900 dark:text-white">Enterprise Security</h3>
-              <p className="text-slate-600 dark:text-slate-400">
-                Your data is encrypted and secure. We never share your competitive intelligence.
+              <h3 className="text-xl font-light mb-3">API Access</h3>
+              <p className="text-sm font-light text-black/70">
+                Integrate SEO data directly into your investment workflows
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 sm:py-32">
+      {/* CTA */}
+      <section id="pricing" className="py-20 sm:py-32">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 p-12 shadow-2xl">
-            <div className="absolute inset-0 bg-grid-white/10" />
+          <div className="border-2 border-black p-12 sm:p-16 text-center">
+            <h2 className="text-3xl sm:text-4xl font-light mb-6 tracking-tight">
+              Start Generating Reports Today
+            </h2>
+            <p className="text-lg font-light text-black/70 mb-2 max-w-2xl mx-auto">
+              Get instant access to comprehensive SEO intelligence on any public company.
+            </p>
+            <p className="text-sm font-light text-black/60 mb-8">
+              Professional reports in seconds, not weeks.
+            </p>
             
-            <div className="relative text-center">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-white mb-4">
-                Ready to Transform Your SEO?
-              </h2>
-              <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-                Join thousands of marketers who are already generating better SEO reports in seconds.
-              </p>
-              
-              <Button
-                size="lg"
-                className="text-base px-8 py-6 bg-white text-purple-600 hover:bg-blue-50 shadow-xl hover:shadow-2xl transition-all duration-300"
-              >
-                <Rocket className="w-5 h-5 mr-2" />
-                Start Free Trial
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-              
-              <p className="mt-4 text-sm text-blue-100">
-                No credit card required • 7-day free trial • Cancel anytime
-              </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Unauthenticated>
+                <SignInButton mode="modal" forceRedirectUrl="/dashboard">
+                  <Button
+                    size="lg"
+                    className="h-14 px-8 bg-black text-white hover:bg-white hover:text-black border-2 border-black transition-all duration-300 text-sm tracking-widest uppercase"
+                  >
+                    Generate Your First Report
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </SignInButton>
+              </Unauthenticated>
+
+              <Authenticated>
+                <a href="/dashboard">
+                  <Button
+                    size="lg"
+                    className="h-14 px-8 bg-black text-white hover:bg-white hover:text-black border-2 border-black transition-all duration-300 text-sm tracking-widest uppercase"
+                  >
+                    Access Dashboard
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </a>
+              </Authenticated>
             </div>
+            
+            <p className="mt-6 text-xs tracking-wider uppercase text-black/60">
+              Real-Time Data • Export to PDF/Excel • API Access Available
+            </p>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 dark:border-slate-800 py-12">
+      <footer className="border-t border-black/10 py-12 bg-black text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center text-slate-600 dark:text-slate-400">
-            <p>© 2025 SEO Reports. All rights reserved.</p>
-            <div className="mt-4 flex justify-center gap-6 text-sm">
-              <a href="#" className="hover:text-blue-600 transition-colors">Privacy</a>
-              <a href="#" className="hover:text-blue-600 transition-colors">Terms</a>
-              <a href="#" className="hover:text-blue-600 transition-colors">Contact</a>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="text-xl font-light tracking-tight">MUSEDATA</div>
+            <div className="flex gap-8 text-xs tracking-wider uppercase text-white/60">
+              <a href="#" className="hover:text-white transition-colors">Privacy</a>
+              <a href="#" className="hover:text-white transition-colors">Terms</a>
+              <a href="#" className="hover:text-white transition-colors">Security</a>
+              <a href="#" className="hover:text-white transition-colors">Contact</a>
             </div>
+          </div>
+          <div className="mt-8 text-center text-xs text-white/40">
+            © 2025 MuseData. SEO intelligence platform for investment professionals.
           </div>
         </div>
       </footer>
-
     </div>
   );
 }
-
-

@@ -1,7 +1,7 @@
 'use client'
 import { SignInButton, SignUpButton, UserButton } from '@clerk/clerk-react'
 import { Authenticated, Unauthenticated } from 'convex/react'
-import { ArrowRight, Menu, Search } from 'lucide-react'
+import { ArrowRight, Menu, Search, X } from 'lucide-react'
 import React, { useState } from 'react'
 import { Button } from '../ui/button'
 import { ModeToggle } from '../ThemeToggle/ThemeToggle'
@@ -9,113 +9,78 @@ import { ModeToggle } from '../ThemeToggle/ThemeToggle'
 const Header = () => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   return (
-     <header className="sticky top-0 z-50 w-full border-b border-slate-200/50 dark:border-slate-800/50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-lg">
-        <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            {/* Logo */}
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
-                <Search className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                SEO Reports
-              </span>
-            </div>
-
+      
+      <header className="fixed top-0 w-full bg-white/95 backdrop-blur-sm border-b border-black/10 z-50">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="text-xl font-light tracking-tight">MUSEDATA</div>
             
-       
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-6">
-             
-              <a href="#features" className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
-                Features
-              </a>
-              <a href="#pricing" className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
-                Pricing
-              </a>
-              <a href="#about" className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">
-                About
-              </a>
-            </div>
-
-            {/* Auth Buttons */}
-            <div className="hidden md:flex items-center gap-4">
+            <nav className="hidden md:flex items-center gap-8">
+              <a href="#reports" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity">Reports</a>
+              <a href="#insights" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity">Insights</a>
+              <a href="#pricing" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity">Pricing</a>
+              
               <Unauthenticated>
                 <SignInButton mode="modal" forceRedirectUrl="/dashboard">
-                  <Button className="bg-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
-                    Sign In
+                  <Button 
+                    size="sm"
+                    className="h-10 px-6 bg-black text-white hover:bg-white hover:text-black border-2 border-black transition-all duration-300 text-xs tracking-widest uppercase"
+                  >
+                    Get Started
                   </Button>
                 </SignInButton>
-                <SignUpButton mode="modal" forceRedirectUrl="/dashboard">
-                  <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
-                    Get Started
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </SignUpButton>
               </Unauthenticated>
 
               <Authenticated>
                 <a href="/dashboard">
-                  <Button className="bg-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                  <Button 
+                    size="sm"
+                    className="h-10 px-6 bg-black text-white hover:bg-white hover:text-black border-2 border-black transition-all duration-300 text-xs tracking-widest uppercase"
+                  >
                     Dashboard
                   </Button>
                 </a>
-                <UserButton />
+                <UserButton  />
               </Authenticated>
-            </div>
+            </nav>
 
-            {/* Mobile menu button */}
-            <ModeToggle />
-            <button
-              className="md:hidden p-2 text-slate-600 dark:text-slate-400"
+            {/* Mobile Menu Button */}
+            <button 
+              className="md:hidden p-2"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
-              <Menu className="w-6 h-6" />
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
+        </div>
 
-          {/* Mobile Menu */}
-          {mobileMenuOpen && (
-            <div className="md:hidden py-4 border-t border-slate-200 dark:border-slate-800">
-              <div className="flex flex-col gap-4">
-                <a href="#features" className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                  Features
+        {/* Mobile Navigation */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-black/10 bg-white">
+            <div className="px-4 py-4 space-y-3">
+              <a href="#reports" className="block text-sm tracking-wide uppercase">Reports</a>
+              <a href="#insights" className="block text-sm tracking-wide uppercase">Insights</a>
+              <a href="#pricing" className="block text-sm tracking-wide uppercase">Pricing</a>
+              <Unauthenticated>
+                <SignInButton mode="modal" forceRedirectUrl="/dashboard">
+                  <Button className="w-full bg-black text-white hover:bg-white hover:text-black border-2 border-black text-xs tracking-widest uppercase">
+                    Get Started
+                  </Button>
+                </SignInButton>
+              </Unauthenticated>
+              <Authenticated>
+                <a href="/dashboard" className="block">
+                  <Button className="w-full bg-black text-white hover:bg-white hover:text-black border-2 border-black text-xs tracking-widest uppercase">
+                    Dashboard
+                  </Button>
                 </a>
-                <a href="#pricing" className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                  Pricing
-                </a>
-                <a href="#about" className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                  About
-                </a>
-                
-                <Unauthenticated>
-                  <div className="flex flex-col gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
-                    <SignInButton mode="modal" forceRedirectUrl="/dashboard">
-                      <Button className="w-full bg-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
-                        Sign In
-                      </Button>
-                    </SignInButton>
-                    <SignUpButton mode="modal" forceRedirectUrl="/dashboard">
-                      <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-                        Get Started
-                      </Button>
-                    </SignUpButton>
-                  </div>
-                </Unauthenticated>
-
-                <Authenticated>
-                  <div className="flex items-center gap-3 pt-2 border-t border-slate-200 dark:border-slate-800">
-                    <UserButton />
-                    <a href="/dashboard" className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                      Go to Dashboard
-                    </a>
-                  </div>
-                </Authenticated>
-              </div>
+              </Authenticated>
             </div>
-          )}
-        </nav>
+          </div>
+        )}
       </header>
+
   )
 }
 
