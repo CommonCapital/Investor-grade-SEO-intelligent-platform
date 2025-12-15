@@ -14,7 +14,7 @@ const sourceSchema = z.object({
 const tieOutStatusSchema = z.enum(["final", "provisional", "flagged", "overridden"]);
 
 const metricSchema = z.object({
-  value: z.union([z.number(), z.string()]),
+  value: z.union([z.number(), z.string()]).nullable(),
   formatted: z.string(),
   unit: z.string().optional(),
   primary_source: z.string(),
@@ -28,6 +28,7 @@ const metricSchema = z.object({
   override_justification: z.string().optional(),
   evidence: z.array(evidenceSchema).optional(),
 });
+
 
 // Change log entry
 const changeLogSchema = z.object({

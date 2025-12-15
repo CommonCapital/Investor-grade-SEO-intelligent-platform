@@ -1,4 +1,5 @@
 'use client'
+
 import { initiateLLM } from '@/actions/initialeLLM'
 import CountrySelector from '@/components/CountrySelector/CountrySelector'
 import ReportsTable from '@/components/ReportsTable/ReportsTable'
@@ -6,136 +7,133 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Authenticated, AuthLoading } from 'convex/react'
-import { BarChart3, FileText, Loader2, Plus, Search, Sparkles } from 'lucide-react'
-import { Prompt } from 'next/font/google'
+import { BarChart3, FileText, Loader2, Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
 const Dashboard = () => {
-    const [prompt, setPrompt] = useState('')
+  const [prompt, setPrompt] = useState('')
   const [country, setCountry] = useState('US')
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     if (!prompt || isLoading) return
     setIsLoading(true)
 
     try {
-      console.log('Generating report for:', prompt, country)
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      // router.push(`/dashboard/report/${snapshotId}`)
-    } catch (error) {
-      console.error(error)
+      const response = await initiateLLM(prompt, undefined, country)
+      if (response.ok) {
+        router.push(`/dashboard/report/${response.data.snapshot_id}`)
+      }
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSubmit()
-    }
-  }
-
   return (
-    <div className='min-h-screen bg-white pt-24'>
-      <div className='mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8'>
-        <div className='space-y-12'>
-          {/* Generate Report Card */}
-          <Card className='border-2 border-black/10 shadow-none'>
-            <CardHeader className='text-center pb-8 border-b border-black/5'>
-              <CardTitle className='text-3xl font-light tracking-tight mb-3'>
-                Generate SEO Report
+    <div className="min-h-screen bg-white text-black">
+      <div className="mx-auto max-w-[1200px] px-4 py-24">
+        <div className="space-y-24">
+
+          {/* CREATE REPORT */}
+          <Card className="border border-black/10 shadow-sm rounded-none">
+            <CardHeader className="space-y-6 pb-12">
+              <CardTitle className="font-serif text-[clamp(36px,6vw,48px)] tracking-tight leading-tight">
+                Create Report
               </CardTitle>
-              <CardDescription className='text-base font-light text-black/70 max-w-2xl mx-auto leading-relaxed'>
-                Enter any public company name to generate comprehensive search visibility analysis
+              <CardDescription className="max-w-[680px] text-base leading-relaxed text-black/70">
+                Enter a business, product, or website to generate a
+                comprehensive SEO analysis.
               </CardDescription>
             </CardHeader>
-            
-            <CardContent className='pt-8'>
-              <div className='space-y-6'>
-                <div className='flex flex-col md:flex-row gap-4'>
-                  <div className='flex-1 relative'>
+
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-12">
+                <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto] gap-4">
+
+                  {/* INPUT */}
+                  <div className="relative">
+                    <FileText className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-black/50" />
                     <Input
                       value={prompt}
                       onChange={(e) => setPrompt(e.target.value)}
-                      onKeyPress={handleKeyPress}
-                      placeholder='Company name (e.g., Tesla, Apple, Microsoft)'
-                      className='h-12 text-base border-2 border-black/10 focus:border-black bg-white transition-all duration-300 font-light'
+                      placeholder="Business / Product / Website"
                       disabled={isLoading}
+                      className="
+                        h-12 pl-10
+                        border border-black/30
+                        rounded-none
+                        text-base
+                        focus:border-black focus:ring-0
+                      "
                     />
                   </div>
-                  
+
                   <CountrySelector
                     value={country}
                     onValueChange={setCountry}
                     disabled={isLoading}
                   />
-                  
+
+                  {/* BUTTON */}
                   <Button
-                    onClick={handleSubmit}
-                    size="lg"
-                    className='h-12 px-8 bg-black text-white hover:bg-white hover:text-black border-2 border-black transition-all duration-300 text-xs tracking-widest uppercase font-normal w-full md:w-auto'
+                    type="submit"
                     disabled={isLoading || !prompt.trim()}
+                    className="
+                      h-12 px-6
+                      bg-black text-white
+                      rounded-none
+                      uppercase tracking-[0.15em] text-sm
+                      hover:bg-white hover:text-black hover:border hover:border-black
+                      transition-all duration-300
+                    "
                   >
                     {isLoading ? (
-                      <>
-                        <Loader2 className='w-4 h-4 mr-2 animate-spin' />
-                        <span className='hidden md:inline'>Generating...</span>
-                        <span className='md:hidden'>Loading</span>
-                      </>
+                      <div className="flex items-center gap-2">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Generating
+                      </div>
                     ) : (
-                      <>
-                        <Search className='w-4 h-4 mr-2' />
-                        <span className='hidden md:inline'>Generate Report</span>
-                        <span className='md:hidden'>Generate</span>
-                      </>
+                      <div className="flex items-center gap-2">
+                        <Plus className="w-4 h-4" />
+                        Generate
+                      </div>
                     )}
                   </Button>
                 </div>
-                
-                <div className='flex flex-wrap justify-center gap-6 pt-6 border-t border-black/5'>
-                  <div className='flex items-center gap-2 text-xs tracking-wider uppercase text-black/60'>
-                    <div className='w-1.5 h-1.5 rounded-full bg-black'></div>
-                    <span>Real-Time Data</span>
-                  </div>
-                  <div className='flex items-center gap-2 text-xs tracking-wider uppercase text-black/60'>
-                    <div className='w-1.5 h-1.5 rounded-full bg-black'></div>
-                    <span>AI Analysis</span>
-                  </div>
-                  <div className='flex items-center gap-2 text-xs tracking-wider uppercase text-black/60'>
-                    <div className='w-1.5 h-1.5 rounded-full bg-black'></div>
-                    <span>Export Ready</span>
-                  </div>
-                </div>
-              </div>
+              </form>
             </CardContent>
           </Card>
 
-          {/* Reports Section */}
-          <Card className='border-2 border-black/10 shadow-none'>
-            <CardHeader className='border-b border-black/5'>
-              <div className='flex items-center gap-3'>
-                <BarChart3 className='w-5 h-5' />
-                <CardTitle className='text-2xl font-light tracking-tight'>Recent Reports</CardTitle>
+          {/* REPORTS */}
+          <Card className="border border-black/10 shadow-sm rounded-none">
+            <CardHeader className="space-y-2">
+              <div className="flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-black" />
+                <CardTitle className="text-2xl font-serif">
+                  Recent Reports
+                </CardTitle>
               </div>
-              <CardDescription className='text-sm font-light text-black/70'>
-                Your generated SEO analysis reports
+              <CardDescription className="text-black/60">
+                Track generated SEO analyses
               </CardDescription>
             </CardHeader>
-            <CardContent className='pt-6'>
+
+            <CardContent>
               <Authenticated>
                 <ReportsTable />
               </Authenticated>
+
               <AuthLoading>
-                <div className='flex items-center justify-center py-12'>
-                  <Loader2 className='w-6 h-6 animate-spin' />
+                <div className="flex justify-center py-12">
+                  <Loader2 className="w-6 h-6 animate-spin text-black" />
                 </div>
               </AuthLoading>
             </CardContent>
           </Card>
+
         </div>
       </div>
     </div>
