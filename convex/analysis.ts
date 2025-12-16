@@ -6,7 +6,7 @@ import {generateObject} from 'ai';
 import {buildAnalysisPrompt, systemPrompt} from "@/prompts/gpt";
 
  import { internal, api } from './_generated/api';
-import { InvestorDashboardSchema } from '@/lib/seo-schema';
+import { investorDashboardSchema } from '@/lib/seo-schema';
 
 
 
@@ -54,14 +54,15 @@ import { InvestorDashboardSchema } from '@/lib/seo-schema';
                 model: openai("gpt-5"),
                 system: systemPrompt(),
                 prompt: analysisPrompt,
-                schema: InvestorDashboardSchema,
+                schema: investorDashboardSchema,
+               
             });
 
            console.log("SEO report generated successfully:", {
 seoReport: seoReport,
 });
 
-const parsed = InvestorDashboardSchema.safeParse(seoReport);
+const parsed = investorDashboardSchema.safeParse(seoReport);
 
     if (!parsed.success) {
         console.error("Generated seoReport failed Zod validation:", parsed.error);
@@ -167,14 +168,14 @@ return null;
                 model: openai("gpt-5"),
                 system: systemPrompt(),
                 prompt: analysisPrompt,
-                schema: InvestorDashboardSchema,
+                schema: investorDashboardSchema,
             });
 
            console.log("SEO report generated successfully:", {
 seoReport: seoReport,
 });
 
-const parsed = InvestorDashboardSchema.safeParse(seoReport);
+const parsed = investorDashboardSchema.safeParse(seoReport);
 
     if (!parsed.success) {
         console.error("Generated seoReport failed Zod validation:", parsed.error);

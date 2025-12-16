@@ -44,7 +44,7 @@ try {
 
     // Ensure rawResults is an array (not a boolean)
     const rawResults = Array.isArray(data) ? data : [data];
-
+    
     await ctx.runMutation(internal.scrapingJobs.saveRawScrapingData, {
         jobId: job._id,
         rawData: rawResults

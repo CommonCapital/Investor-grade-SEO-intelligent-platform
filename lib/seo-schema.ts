@@ -12,14 +12,28 @@ export const evidenceSchema = z.object({
 // Tie-out status for reconciliation
 const tieOutStatusSchema = z.enum(["final", "provisional", "flagged"]);
 
-// Simplified metric with essential provenance
+// Data availability status
+const availabilityStatusSchema = z.enum([
+  "available",      // Data present and validated
+  "pending",        // Expected but not yet received  
+  "unavailable",    // Source doesn't provide this
+  "restricted",     // Behind paywall or access limited
+  "stale",          // Data exists but outdated
+  "conflicting",    // Multiple sources disagree
+]);
+
+// Metric with uncertainty awareness
 const metricSchema = z.object({
   value: z.union([z.number(), z.string()]).nullable(),
   formatted: z.string().nullable(),
-  unit: z.string().nullable(),
+  unit: z.string().optional().nullable(),
   source: z.string().nullable(),
   tie_out_status: tieOutStatusSchema,
   last_updated: z.string().nullable(),
+  // Uncertainty fields - required for decision-readiness
+  confidence: z.number().min(0).max(100),           // 0-100 reliability score
+  availability: availabilityStatusSchema,           // Current data status
+  unavailable_reason: z.string().optional().nullable(),        // Why missing, if applicable
 });
 
 // Event in timeline
@@ -30,16 +44,16 @@ const eventSchema = z.object({
   title: z.string(),
   description: z.string(),
   impact: z.enum(["positive", "negative", "neutral"]),
-  source_url: z.string().optional(),
+  source_url: z.string().optional().nullable(),
 });
 
 // Scenario definition
 const scenarioSchema = z.object({
   name: z.enum(["base", "downside", "upside"]),
-  probability: z.number().min(0).max(1).nullable(),
+  probability: z.number().min(0).max(1),
   assumptions: z.array(z.object({
-    key: z.string(),
-    value: z.string(),
+    key: z.string().nullable(),
+    value: z.string().nullable(),
   })),
   outputs: z.object({
     revenue: metricSchema,
@@ -55,13 +69,13 @@ const riskSchema = z.object({
   title: z.string(),
   description: z.string(),
   severity: z.enum(["critical", "high", "medium", "low"]),
-  trigger: z.string(),
-  mitigation: z.string().optional(),
+  trigger: z.string().nullable(),
+  mitigation: z.string().optional().nullable(),
 });
 
 // === MAIN SCHEMA ===
 
-export const InvestorDashboardSchema = z.object({
+export const investorDashboardSchema = z.object({
   // Run metadata
   run_metadata: z.object({
     run_id: z.string(),
@@ -125,9 +139,10 @@ export const InvestorDashboardSchema = z.object({
 });
 
 // Type exports
-export type InvestorDashboard = z.infer<typeof InvestorDashboardSchema>;
+export type InvestorDashboard = z.infer<typeof investorDashboardSchema>;
 export type Metric = z.infer<typeof metricSchema>;
 export type TieOutStatus = z.infer<typeof tieOutStatusSchema>;
+export type AvailabilityStatus = z.infer<typeof availabilityStatusSchema>;
 export type Event = z.infer<typeof eventSchema>;
 export type Scenario = z.infer<typeof scenarioSchema>;
 export type Risk = z.infer<typeof riskSchema>;

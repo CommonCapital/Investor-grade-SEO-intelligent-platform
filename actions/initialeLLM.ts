@@ -75,7 +75,7 @@ const encodeEndpoint = encodeURIComponent(ENDPOINT);
  const url = `https://api.brightdata.com/datasets/v3/trigger?dataset_id=${process.env.BRIGHTDATA_DATASET_ID}&endpoint=${encodeEndpoint}&format=json&uncompressed_webhook=true&include_errors=true`
 
 
- const perplexityPrompt = buildInvestorSeaSearchPrompt(prompt);
+ const scraperPrompt = buildInvestorSeaSearchPrompt(prompt);
  try {
     const response = await fetch(url, {
         method: "POST",
@@ -86,21 +86,21 @@ const encodeEndpoint = encodeURIComponent(ENDPOINT);
         body: JSON.stringify({
             input: [
                 {
-                    url: "https://www.perplexity.ai",
-                    prompt: perplexityPrompt,
-                    country: country,
+                    url: "https://gemini.google.com/",
+                    prompt: scraperPrompt,
                     index: 1,
                 },
             ],
-            custom_output_fields: [
-                'url',
-                'prompt',
+           custom_output_fields: [
+                
                 'answer_text',
-                'sources',
-                'citations',
-                'timestamp',
-                "input",
-            ],
+                ],
+        
+
+
+
+
+            
         }),
     });
     if (!response.ok) {

@@ -72,7 +72,7 @@ export function RunHeader({ metadata, mode, onModeChange }: RunHeaderProps) {
                   : "bg-transparent text-foreground hover:bg-foreground/5"
               )}
             >
-              More Info 
+              Private
             </button>
           </div>
         </div>

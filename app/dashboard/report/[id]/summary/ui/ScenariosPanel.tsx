@@ -1,6 +1,7 @@
 import { Scenario } from "@/lib/seo-schema";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { EmptySection } from "./EmptySection";
 
 interface ScenariosPanelProps {
   scenarios: Scenario[];
@@ -15,21 +16,32 @@ export function ScenariosPanel({ scenarios }: ScenariosPanelProps) {
     upside: "Upside",
   };
 
+  // Handle empty scenarios
+  if (!scenarios || scenarios.length === 0) {
+    return (
+      <section className="py-8 border-b border-border animate-fade-in">
+        <div className="px-6">
+          <h2 className="text-micro uppercase tracking-ultra-wide text-muted-foreground font-sans mb-6">
+            Scenario Analysis
+          </h2>
+          <EmptySection
+            title="Scenario Analysis"
+            type="unavailable"
+            reason="No scenario models have been constructed. Without scenarios, you cannot stress-test the investment thesis against different market conditions or assumptions."
+            impact="Single-point estimates create false precision. Consider what happens if growth is 50% lower or multiples compress 2-3 turns."
+            suggestion="Build Base/Downside/Upside cases with explicit probability weights and assumption deltas."
+          />
+        </div>
+      </section>
+    );
+  }
+
   const current = scenarios.find((s) => s.name === activeScenario) || scenarios[0];
 
   const valuations = scenarios.map((s) => s.outputs.valuation.value as number);
   const minVal = Math.min(...valuations);
   const maxVal = Math.max(...valuations);
   const range = maxVal - minVal;
-if (!scenarios || scenarios.length === 0) {
-  return (
-    <section className="py-8 border-b border-border">
-      <div className="px-6 text-sm text-muted-foreground">
-        No scenario analysis available for this report.
-      </div>
-    </section>
-  );
-}
 
   return (
     <section className="py-8 border-b border-border animate-fade-in">
@@ -53,11 +65,7 @@ if (!scenarios || scenarios.length === 0) {
               >
                 {scenarioLabels[scenario.name]}
                 <span className="ml-2 text-[10px] opacity-60">
-                  {typeof scenario.probability === "number"
-                    ? `${Math.round(scenario.probability * 100)}%`
-                    : scenario.probability
-                    ? `${Math.round(Number(scenario.probability) * 100)}%`
-                    : null}
+                  {Math.round(scenario.probability * 100)}%
                 </span>
               </button>
             ))}
@@ -109,7 +117,7 @@ if (!scenarios || scenarios.length === 0) {
               Assumptions
             </h3>
             <div className="space-y-3">
-              {current?.assumptions?.map((assumption: any, i: any) => (
+              {current.assumptions.map((assumption, i) => (
                 <div
                   key={i}
                   className="flex items-start justify-between py-2 border-b border-border/50"

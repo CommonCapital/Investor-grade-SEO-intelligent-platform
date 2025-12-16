@@ -1,16 +1,18 @@
 import { useTimeHorizon } from "@/hooks/use-time-horizon";
-import { AIInsightsPanel } from "./AIInsightsPanel";
-import { DataLineage } from "./DataLineage";
-import { EventsTimeline } from "./EventsTimeline";
-import { ExecutiveSummary } from "./ExecutiveSummary";
-import { FinancialsGrid } from "./FinancialsGrid";
-import { RisksPanel } from "./RisksPanel";
 import { RunHeader } from "./RunHeader";
-import { ScenariosPanel } from "./ScenariosPanel";
+import { ExecutiveSummary } from "./ExecutiveSummary";
 import { TimeSeriesSection } from "./TimeSeriesSection";
+import { AIInsightsPanel } from "./AIInsightsPanel";
+import { FinancialsGrid } from "./FinancialsGrid";
+import { EventsTimeline } from "./EventsTimeline";
+import { ScenariosPanel } from "./ScenariosPanel";
+import { RisksPanel } from "./RisksPanel";
+import { DataLineage } from "./DataLineage";
+import { DecisionSufficiency } from "./DecisionSufficiency";
 import { useState } from "react";
 import { InvestorDashboard as InvestorDashboardType } from "@/lib/seo-schema";
 import { Loader2Icon } from "lucide-react";
+
 interface Props {
     job: any;
 }
@@ -36,6 +38,11 @@ const [mode, setMode] = useState(data?.run_metadata.mode);
       />
 
       <main>
+        {/* Decision Sufficiency Assessment - Always visible */}
+        <section className="py-6 px-6 border-b border-border">
+          <DecisionSufficiency data={data} />
+        </section>
+        
         <ExecutiveSummary summary={data.executive_summary} />
         
         {/* Time-Series Section with functional horizon controls */}

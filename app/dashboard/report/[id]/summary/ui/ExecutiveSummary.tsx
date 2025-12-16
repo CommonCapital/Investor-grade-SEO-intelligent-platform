@@ -25,8 +25,7 @@ const thesisStatusConfig = {
 };
 
 export function ExecutiveSummary({ summary }: ExecutiveSummaryProps) {
-  const statusKey = summary.thesis_status as keyof typeof thesisStatusConfig;
-  const statusConfig = thesisStatusConfig[statusKey];
+  const statusConfig = thesisStatusConfig[summary.thesis_status];
   const StatusIcon = statusConfig.icon;
 
   return (
@@ -61,7 +60,7 @@ export function ExecutiveSummary({ summary }: ExecutiveSummaryProps) {
               Key Facts
             </h3>
             <ul className="space-y-2">
-              {summary.key_facts.map((fact:any, i:any) => (
+              {summary.key_facts.map((fact, i) => (
                 <li key={i} className="text-sm font-light leading-relaxed">
                   {fact}
                 </li>
@@ -75,7 +74,7 @@ export function ExecutiveSummary({ summary }: ExecutiveSummaryProps) {
               Implications
             </h3>
             <ul className="space-y-2">
-              {summary.implications?.map((impl, i) => (
+              {summary.implications.map((impl, i) => (
                 <li key={i} className="text-sm font-light leading-relaxed">
                   {impl}
                 </li>
@@ -89,7 +88,7 @@ export function ExecutiveSummary({ summary }: ExecutiveSummaryProps) {
               Key Risks
             </h3>
             <ul className="space-y-2">
-              {summary.key_risks?.map((risk: any, i:any) => (
+              {summary.key_risks.map((risk, i) => (
                 <li key={i} className="text-sm font-light leading-relaxed">
                   {risk}
                 </li>
