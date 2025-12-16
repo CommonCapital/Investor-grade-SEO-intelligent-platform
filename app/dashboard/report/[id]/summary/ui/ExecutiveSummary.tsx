@@ -1,9 +1,9 @@
-import { ExecutiveSummary as ExecutiveSummaryType } from "@/lib/seo-schema";
+import { InvestorDashboard } from "@/lib/seo-schema";
 import { cn } from "@/lib/utils";
 import { CheckCircle, AlertTriangle, XCircle } from "lucide-react";
 
 interface ExecutiveSummaryProps {
-  summary: ExecutiveSummaryType;
+  summary: InvestorDashboard["executive_summary"];
 }
 
 const thesisStatusConfig = {
@@ -25,7 +25,8 @@ const thesisStatusConfig = {
 };
 
 export function ExecutiveSummary({ summary }: ExecutiveSummaryProps) {
-  const statusConfig = thesisStatusConfig[summary.investment_thesis_status];
+  const statusKey = summary.thesis_status as keyof typeof thesisStatusConfig;
+  const statusConfig = thesisStatusConfig[statusKey];
   const StatusIcon = statusConfig.icon;
 
   return (
@@ -53,14 +54,14 @@ export function ExecutiveSummary({ summary }: ExecutiveSummaryProps) {
         </p>
 
         {/* Grid of facts/implications/risks */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Key Facts */}
           <div className="space-y-3">
             <h3 className="text-micro uppercase tracking-ultra-wide text-muted-foreground font-sans border-b border-border pb-2">
               Key Facts
             </h3>
             <ul className="space-y-2">
-              {summary.key_facts.map((fact, i) => (
+              {summary.key_facts.map((fact:any, i:any) => (
                 <li key={i} className="text-sm font-light leading-relaxed">
                   {fact}
                 </li>
@@ -74,7 +75,7 @@ export function ExecutiveSummary({ summary }: ExecutiveSummaryProps) {
               Implications
             </h3>
             <ul className="space-y-2">
-              {summary.implications.map((impl, i) => (
+              {summary.implications?.map((impl, i) => (
                 <li key={i} className="text-sm font-light leading-relaxed">
                   {impl}
                 </li>
@@ -88,27 +89,9 @@ export function ExecutiveSummary({ summary }: ExecutiveSummaryProps) {
               Key Risks
             </h3>
             <ul className="space-y-2">
-              {summary.key_risks.map((risk, i) => (
+              {summary.key_risks?.map((risk: any, i:any) => (
                 <li key={i} className="text-sm font-light leading-relaxed">
                   {risk}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Decisions Required */}
-          <div className="space-y-3">
-            <h3 className="text-micro uppercase tracking-ultra-wide text-muted-foreground font-sans border-b border-border pb-2">
-              Decisions Required
-            </h3>
-            <ul className="space-y-2">
-              {summary.decisions_required.map((decision, i) => (
-                <li
-                  key={i}
-                  className="text-sm font-light leading-relaxed flex items-start gap-2"
-                >
-                  <span className="text-foreground font-medium">→</span>
-                  {decision}
                 </li>
               ))}
             </ul>

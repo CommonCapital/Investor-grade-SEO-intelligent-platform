@@ -6,7 +6,7 @@ import {generateObject} from 'ai';
 import {buildAnalysisPrompt, systemPrompt} from "@/prompts/gpt";
 
  import { internal, api } from './_generated/api';
-import { investorDashboardSchema } from '@/lib/seo-schema';
+import { InvestorDashboardSchema } from '@/lib/seo-schema';
 
 
 
@@ -54,17 +54,29 @@ import { investorDashboardSchema } from '@/lib/seo-schema';
                 model: openai("gpt-5"),
                 system: systemPrompt(),
                 prompt: analysisPrompt,
-                schema: investorDashboardSchema,
+                schema: InvestorDashboardSchema,
             });
 
            console.log("SEO report generated successfully:", {
-entity: seoReport.run_metadata.entity,
-mode: seoReport.run_metadata.mode,
-metric_revisions: seoReport.delta_summary.metric_revisions,
-executive_summary: seoReport.executive_summary.key_facts,
-scenarios: seoReport.scenarios,
-risks: seoReport.risks,
+seoReport: seoReport,
 });
+
+const parsed = InvestorDashboardSchema.safeParse(seoReport);
+
+    if (!parsed.success) {
+        console.error("Generated seoReport failed Zod validation:", parsed.error);
+
+       
+        
+        await ctx.runMutation(api.scrapingJobs.failJob, {
+                    jobId: args.jobId,
+                    error: "AI_VALIDATION_FAILED: Schema mismatch detected",
+                 
+                });
+        
+        return null;
+    }
+    
 
 
 await ctx.runMutation(internal.scrapingJobs.saveSeoReport, {
@@ -155,24 +167,36 @@ return null;
                 model: openai("gpt-5"),
                 system: systemPrompt(),
                 prompt: analysisPrompt,
-                schema: investorDashboardSchema,
+                schema: InvestorDashboardSchema,
             });
 
            console.log("SEO report generated successfully:", {
-entity: seoReport.run_metadata.entity,
-mode: seoReport.run_metadata.mode,
-metric_revisions: seoReport.delta_summary.metric_revisions,
-executive_summary: seoReport.executive_summary.key_facts,
-scenarios: seoReport.scenarios,
-risks: seoReport.risks,
+seoReport: seoReport,
 });
 
+const parsed = InvestorDashboardSchema.safeParse(seoReport);
+
+    if (!parsed.success) {
+        console.error("Generated seoReport failed Zod validation:", parsed.error);
+
+       
+          
+        await ctx.runMutation(api.scrapingJobs.failJob, {
+                    jobId: args.jobId,
+                    error: "AI_VALIDATION_FAILED: Schema mismatch detected",
+                 
+                });
+        
+        
+        return null;
+    }
 
 await ctx.runMutation(internal.scrapingJobs.saveSeoReport, {
     jobId: args.jobId,
     seoReport: seoReport
 });
 console.log("SEO report saved for job:", args.jobId)
+
 await ctx.runMutation(internal.scrapingJobs.completeJob, {
     jobId: args.jobId
 });

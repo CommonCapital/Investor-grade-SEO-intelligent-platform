@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { internalMutation, mutation, query } from "./_generated/server";
 import { createECDH } from "crypto";
-import { investorDashboardSchema } from "@/lib/seo-schema";
+import { InvestorDashboardSchema } from "@/lib/seo-schema";
 
 
 
@@ -90,9 +90,9 @@ export const saveSeoReport = internalMutation({
     },
     returns: v.null(),
     handler: async (ctx , args) => {
-        const parsed = investorDashboardSchema.safeParse(args.seoReport);
+        const parsed = InvestorDashboardSchema.safeParse(args.seoReport);
         await ctx.db.patch(args.jobId, {
-            seoReport: parsed,
+            seoReport: parsed.data,
         });
         return null;
     },
@@ -141,7 +141,7 @@ export const getJobById = query({
     handler: async (ctx , args) => {
         const job = await ctx.db.get(args.jobId);
         if (job && job.seoReport !==undefined) {
-            const result = investorDashboardSchema.safeParse(job.seoReport);
+            const result = InvestorDashboardSchema.safeParse(job.seoReport);
             if (!result.success) {
                 throw new Error("Stored seoReport failed validation");
             }
@@ -285,7 +285,8 @@ export const getJobBySnapshotId = query({
 
 
         if (job && job.seoReport !== undefined) {
-            const result = investorDashboardSchema.safeParse(job.seoReport);
+            const result = InvestorDashboardSchema.safeParse(job.seoReport);
+            console.log("Validation result:", result);
             if (!result.success) {
                 throw new Error("Stored seoReport failed validation");
             }
@@ -330,7 +331,7 @@ handler: async (ctx , args) => {
 
     for (const job of jobs) {
         if (job.seoReport !== undefined) {
-            const result = investorDashboardSchema.safeParse(job.seoReport);
+            const result = InvestorDashboardSchema.safeParse(job.seoReport);
             if (!result.success) {
                 throw new Error("Stored seoReport failed validation");
             }
