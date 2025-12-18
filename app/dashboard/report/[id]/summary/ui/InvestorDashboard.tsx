@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { InvestorDashboard as InvestorDashboardType } from "@/lib/seo-schema";
 import { useTimeHorizon } from "@/hooks/use-time-horizon";
 import { RunHeader } from "./RunHeader";
 import { ExecutiveSummary } from "./ExecutiveSummary";
@@ -9,26 +11,21 @@ import { ScenariosPanel } from "./ScenariosPanel";
 import { RisksPanel } from "./RisksPanel";
 import { DataLineage } from "./DataLineage";
 import { DecisionSufficiency } from "./DecisionSufficiency";
-import { useState } from "react";
-import { InvestorDashboard as InvestorDashboardType } from "@/lib/seo-schema";
-import { Loader2Icon } from "lucide-react";
 
-interface Props {
-    job: any;
+interface InvestorDashboardProps {
+  data: InvestorDashboardType;
 }
-export const InvestorDashboardComponent = ({job}:Props)  => {
- 
 
-const data = job?.seoReport as InvestorDashboardType | any;
-const [mode, setMode] = useState(data?.run_metadata.mode);
-
+export function InvestorDashboard({ data }: InvestorDashboardProps) {
+  const [mode, setMode] = useState<"public" | "private">(data.run_metadata.mode);
+  
   const { 
     horizon, 
     setHorizon, 
     horizonData, 
     isTransitioning 
   } = useTimeHorizon(data);
- 
+
   return (
     <div className="min-h-screen bg-background">
       <RunHeader

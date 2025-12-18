@@ -16,7 +16,7 @@ import { useUser } from "@clerk/clerk-react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Loader2Icon, LoaderIcon } from "lucide-react";
-import { InvestorDashboardComponent } from "./ui/InvestorDashboard";
+import { InvestorDashboard } from "./ui/InvestorDashboard";
 
 
 
@@ -30,6 +30,9 @@ import { InvestorDashboardComponent } from "./ui/InvestorDashboard";
     userId: user?.id || "skip"
   });
   
+const data = job?.seoReport as InvestorDashboardType | any;
+
+
   if (!job || job === undefined) {
     return <Loader2Icon className="w-4 h-4 animate-spin" />;
   }
@@ -40,7 +43,7 @@ import { InvestorDashboardComponent } from "./ui/InvestorDashboard";
 
 
   return (
-  <InvestorDashboardComponent job={job} />
+  <InvestorDashboard data={data} />
   );
 }
 export default Page;

@@ -8,11 +8,11 @@ import {
   Tooltip,
   ReferenceLine,
 } from "recharts";
-import { TimeSeriesMetric, TimeHorizon, HORIZON_LABELS } from "@/lib/time-series-data";
+import { LegacyTimeSeriesMetric, TimeHorizon, HORIZON_LABELS } from "@/lib/time-series-data";
 import { cn } from "@/lib/utils";
 
 interface TimeSeriesChartProps {
-  metric: TimeSeriesMetric;
+  metric: LegacyTimeSeriesMetric;
   horizon: TimeHorizon;
   label: string;
   isTransitioning?: boolean;
@@ -55,7 +55,7 @@ export function TimeSeriesChart({
       <div className="flex items-start justify-between mb-4">
         <div>
           <span className="text-micro uppercase tracking-ultra-wide text-muted-foreground font-sans block mb-1">
-            {label} • {HORIZON_LABELS[horizon]}
+            {label} • {metric.current.value}
           </span>
           <span className="text-2xl font-mono font-medium">
             {metric.current.formatted}
