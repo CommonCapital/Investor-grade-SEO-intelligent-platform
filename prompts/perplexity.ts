@@ -13,63 +13,64 @@ REQUIRED DATA TO EXTRACT:
 
 ## 2. FINANCIAL METRICS
 Search SEC filings, Yahoo Finance, company IR. Extract for FY2024, FY2023, and latest quarter:
-- Total Revenue
-- Revenue Growth (% YoY)
-- EBITDA
-- EBITDA Margin (%)
-- Free Cash Flow
-- Operating Income
-- Net Income
-- Gross Margin
+- Total Revenue (WITH HISTORY - quarterly data required)
+- Revenue Growth (% YoY) (NO HISTORY - current value only)
+- EBITDA (WITH HISTORY - quarterly data required)
+- EBITDA Margin (%) (NO HISTORY - current value only)
+- Free Cash Flow (NO HISTORY - current value only)
+- Operating Income (NO HISTORY - current value only)
+- Net Income (NO HISTORY - current value only)
+- Gross Margin (NO HISTORY - current value only)
 
 For EACH metric, include:
-- value: z.union([z.number(), z.string()]).default(0)
-- formatted: z.string().default("")
-- unit: z.string().optional().default("")
-- source: z.string().default("")
+- value: z.union([z.number(), z.string()]).nullable()
+- formatted: z.string().nullable()
+- unit: z.string().optional().nullable()
+- source: z.string().nullable()
 - tie_out_status: z.enum(["final", "provisional", "flagged"])
-- last_updated: z.string().default("")
+- last_updated: z.string().nullable()
 - confidence: z.number().min(0).max(100)
 - availability: z.enum(["available", "pending", "unavailable", "restricted", "stale", "conflicting"])
-- unavailable_reason: z.string().optional().default("")
+- unavailable_reason: z.string().optional().nullable()
 - decision_context: z.object({
     confidence_level: z.enum(["high", "medium", "low"]),
     sufficiency_status: z.enum(["sufficient", "insufficient"]),
     knowns: z.array(z.string()),
     unknowns: z.array(z.string()),
     what_changes_conclusion: z.array(z.string())
-  }).optional()
+  }).optional().nullable()
 
-## 3. TIME-SERIES METRICS
-- Historical data for 1H, 1D, 1W, 1M, 1Y, 5Y, 10Y horizons
-- Quarterly slices Q1-Q4 per horizon
-- Each data point includes:
-  - timestamp: z.string()
-  - value: z.number().default(0)
-  - formatted: z.string()
-  - unit: z.string().optional().default("")
-  - confidence: z.number().min(0).max(100)
-  - availability: z.enum(["available", "pending", "unavailable", "restricted", "stale", "conflicting"])
-  - unavailable_reason: z.string().optional().default("")
+## 3. TIME-SERIES METRICS (ONLY for Revenue and EBITDA)
+- Historical data for 1D, 1W, 1M, 1Y, 5Y, 10Y horizons (NO 1H)
+- Quarterly slices Q1-Q4 per horizon - MAXIMIZE QUARTERS: Fetch as many quarters as possible for each horizon
 - Each horizon must include:
-  - quarters: z.object({ Q1: z.number().default(0), Q2: z.number().default(0), Q3: z.number().default(0), Q4: z.number().default(0) })
-  - high: z.number().default(0)
-  - low: z.number().default(0)
-  - average: z.number().default(0)
-  - volatility: z.number().default(0)
-  - change_percent: z.number().default(0)
+  - quarters: z.object({ Q1: z.number().nullable(), Q2: z.number().nullable(), Q3: z.number().nullable(), Q4: z.number().nullable() })
+  - high: z.number().nullable()
+  - low: z.number().nullable()
+  - average: z.number().nullable()
+  - volatility: z.number().nullable()
+  - change_percent: z.number().nullable()
+
+⚠️ CRITICAL: Revenue/EBITDA quarterly data:
+- 1D, 1W horizons: Set to null (not meaningful for financial metrics)
+- 1M horizon: Extract last 4 months if available, aggregate into quarters
+- 1Y horizon: Extract Q1, Q2, Q3, Q4 from last 4 quarters
+- 5Y horizon: Extract 20 quarters (4 per year × 5 years) if available, or latest 4 quarters
+- 10Y horizon: Extract 40 quarters if available, or latest 4 quarters
 
 ## 4. MARKET DATA
 Search Yahoo Finance, Bloomberg, Google Finance. Include:
-- Current stock price
-- Market capitalization
-- P/E Ratio (trailing & forward)
-- EV/EBITDA
-- Analyst target price
-- 52-week high/low
-- Trading volume
+- Stock Price (WITH HISTORY - quarterly data required)
+- Trading Volume (WITH HISTORY - quarterly data required)
+- Market Capitalization (NO HISTORY - current value only)
+- P/E Ratio Trailing (NO HISTORY - current value only)
+- P/E Ratio Forward (NO HISTORY - current value only)
+- EV/EBITDA (NO HISTORY - current value only)
+- Analyst Target Price (NO HISTORY - current value only)
+- 52-Week High (NO HISTORY - current value only)
+- 52-Week Low (NO HISTORY - current value only)
 
-Include all fields for metrics as above (value, formatted, confidence, availability, unavailable_reason, decision_context).
+For Stock Price and Volume, include quarterly data across ALL horizons: 1D, 1W, 1M, 1Y, 5Y, 10Y
 
 ## 5. RECENT EVENTS
 Last 6 months:
@@ -81,7 +82,7 @@ Last 6 months:
   - title: z.string()
   - description: z.string()
   - impact: z.enum(["positive", "negative", "neutral"])
-  - source_url: z.string().optional().default("")
+  - source_url: z.string().optional().nullable()
 
 ## 6. RISKS
 - Top 5–10 risk factors from latest 10-K
@@ -91,8 +92,8 @@ Last 6 months:
   - title: z.string()
   - description: z.string()
   - severity: z.enum(["critical", "high", "medium", "low"])
-  - trigger: z.string().default("")
-  - mitigation: z.string().optional().default("")
+  - trigger: z.string().nullable()
+  - mitigation: z.string().optional().nullable()
 
 ## 7. GUIDANCE & SCENARIOS
 - Management forward guidance (revenue, earnings, margins)
@@ -100,10 +101,26 @@ Last 6 months:
 - Each scenario:
   - name: z.enum(["base", "downside", "upside"])
   - probability: z.number().min(0).max(1)
-  - assumptions: z.array(z.object({ key: z.string().default(""), value: z.string().default("") }))
+  - assumptions: z.array(z.object({ key: z.string().nullable(), value: z.string().nullable() }))
   - outputs: z.object({ revenue: metricSchema, ebitda: metricSchema, valuation: metricSchema })
 
-## 8. SOURCES
+## 8. AI INSIGHTS
+Generate investment-grade AI insights with horizon relevance:
+- Each insight:
+  - id: z.string()
+  - type: z.enum(["prediction", "recommendation", "alert", "analysis"])
+  - confidence: z.number().min(0).max(1)
+  - title: z.string()
+  - summary: z.string()
+  - details: z.string().optional().nullable()
+  - source: z.string()
+  - generated_at: z.string()
+  - horizon_relevance: z.array(z.enum(["1D", "1W", "1M", "1Y", "5Y", "10Y"]))
+  - impact_score: z.number().min(-1).max(1)
+  - action_required: z.boolean()
+  - supporting_metrics: z.array(z.string()).optional().nullable()
+
+## 9. SOURCES
 - Primary: SEC filings, company IR, official releases
 - Secondary: financial news sites, aggregators
 - Each source:
@@ -113,135 +130,138 @@ Last 6 months:
 
 ---
 
-OUTPUT FORMAT (RETURN ONLY VALID JSON ADHERING TO investorDashboardSchema):
+OUTPUT FORMAT (RETURN ONLY VALID JSON):
 
 {
   "run_metadata": {
-    "run_id": "string",
-    "entity": "string",
-    "ticker": "string (optional, default: '')",
-    "mode": "public|private|market_data_only",
-    "timestamp": "string",
-    "owner": "string"
+    "run_id": string,
+    "entity": string,
+    "ticker": string,
+    "mode": "public|private",
+    "timestamp": string,
+    "owner": string
   },
   "executive_summary": {
-    "headline": "string",
-    "key_facts": ["string"],
-    "implications": ["string"],
-    "key_risks": ["string"],
+    "headline": string,
+    "key_facts": [string],
+    "implications": [string],
+    "key_risks": [string],
     "thesis_status": "intact|challenged|broken"
   },
   "financials": {
     "revenue": {
-      "current": {
-        "value": number,
-        "formatted": string,
-        "unit": string,
-        "source": string,
-        "tie_out_status": "final|provisional|flagged",
-        "last_updated": string,
-        "confidence": number,
-        "availability": "available|pending|unavailable|restricted|stale|conflicting",
-        "unavailable_reason": string,
-        "decision_context": {
-          "confidence_level": "high|medium|low",
-          "sufficiency_status": "sufficient|insufficient",
-          "knowns": [string],
-          "unknowns": [string],
-          "what_changes_conclusion": [string]
-        }
-      },
+      "current": { value, formatted, unit, source, tie_out_status, last_updated, confidence, availability, unavailable_reason, decision_context },
       "history": {
-        "series": [
-          {
-            "timestamp": string,
-            "value": number,
-            "formatted": string,
-            "unit": string,
-            "confidence": number,
-            "availability": "available|pending|unavailable|restricted|stale|conflicting",
-            "unavailable_reason": string
-          }
-        ],
         "horizons": {
-          "1H": {
-            "quarters": { "Q1": number, "Q2": number, "Q3": number, "Q4": number },
-            "high": number,
-            "low": number,
-            "average": number,
-            "volatility": number,
-            "change_percent": number
-          },
-          "1D": { "quarters": { "Q1": number, "Q2": number, "Q3": number, "Q4": number }, "high": number, "low": number, "average": number, "volatility": number, "change_percent": number },
-          "1W": { "quarters": { "Q1": number, "Q2": number, "Q3": number, "Q4": number }, "high": number, "low": number, "average": number, "volatility": number, "change_percent": number },
-          "1M": { "quarters": { "Q1": number, "Q2": number, "Q3": number, "Q4": number }, "high": number, "low": number, "average": number, "volatility": number, "change_percent": number },
-          "1Y": { "quarters": { "Q1": number, "Q2": number, "Q3": number, "Q4": number }, "high": number, "low": number, "average": number, "volatility": number, "change_percent": number },
-          "5Y": { "quarters": { "Q1": number, "Q2": number, "Q3": number, "Q4": number }, "high": number, "low": number, "average": number, "volatility": number, "change_percent": number },
-          "10Y": { "quarters": { "Q1": number, "Q2": number, "Q3": number, "Q4": number }, "high": number, "low": number, "average": number, "volatility": number, "change_percent": number }
+          "1D": null,
+          "1W": null,
+          "1M": { "quarters": { Q1, Q2, Q3, Q4 }, high, low, average, volatility, change_percent },
+          "1Y": { "quarters": { Q1, Q2, Q3, Q4 }, high, low, average, volatility, change_percent },
+          "5Y": { "quarters": { Q1, Q2, Q3, Q4 }, high, low, average, volatility, change_percent },
+          "10Y": { "quarters": { Q1, Q2, Q3, Q4 }, high, low, average, volatility, change_percent }
         },
-        "availability": "available|pending|unavailable|restricted|stale|conflicting",
-        "confidence": number,
-        "unavailable_reason": string,
-        "source": string,
-        "decision_context": {
-          "confidence_level": "high|medium|low",
-          "sufficiency_status": "sufficient|insufficient",
-          "knowns": [string],
-          "unknowns": [string],
-          "what_changes_conclusion": [string]
-        }
+        availability, confidence, unavailable_reason, source, decision_context
       }
     },
-    "revenue_growth": { ...same as revenue... },
-    "ebitda": { ...same as revenue... },
-    "ebitda_margin": { ...same as revenue... },
-    "free_cash_flow": { ...same as revenue... }
+    "revenue_growth": {
+      "current": { value, formatted, unit, source, tie_out_status, last_updated, confidence, availability, unavailable_reason, decision_context }
+    },
+    "ebitda": {
+      "current": { value, formatted, unit, source, tie_out_status, last_updated, confidence, availability, unavailable_reason, decision_context },
+      "history": {
+        "horizons": { "1D": null, "1W": null, "1M": {...}, "1Y": {...}, "5Y": {...}, "10Y": {...} },
+        availability, confidence, unavailable_reason, source, decision_context
+      }
+    },
+    "ebitda_margin": {
+      "current": { value, formatted, unit, source, tie_out_status, last_updated, confidence, availability, unavailable_reason, decision_context }
+    },
+    "free_cash_flow": {
+      "current": { value, formatted, unit, source, tie_out_status, last_updated, confidence, availability, unavailable_reason, decision_context }
+    }
   },
   "market_data": {
-    "stock_price": { "current": {...}, "history": {...} },
-    "market_cap": { "current": {...}, "history": {...} },
-    "trading_volume": { "current": {...}, "history": {...} },
-    "pe_ratio_trailing": { "current": {...}, "history": {...} },
-    "pe_ratio_forward": { "current": {...}, "history": {...} },
-    "ev_ebitda": { "current": {...}, "history": {...} },
-    "analyst_target_price": { "current": {...}, "history": {...} },
-    "fifty_two_week_high": { "current": {...}, "history": {...} },
-    "fifty_two_week_low": { "current": {...}, "history": {...} }
+    "stock_price": {
+      "current": { value, formatted, unit, source, tie_out_status, last_updated, confidence, availability, unavailable_reason, decision_context },
+      "history": {
+        "horizons": {
+          "1D": { "quarters": { Q1, Q2, Q3, Q4 }, high, low, average, volatility, change_percent },
+          "1W": { "quarters": { Q1, Q2, Q3, Q4 }, high, low, average, volatility, change_percent },
+          "1M": { "quarters": { Q1, Q2, Q3, Q4 }, high, low, average, volatility, change_percent },
+          "1Y": { "quarters": { Q1, Q2, Q3, Q4 }, high, low, average, volatility, change_percent },
+          "5Y": { "quarters": { Q1, Q2, Q3, Q4 }, high, low, average, volatility, change_percent },
+          "10Y": { "quarters": { Q1, Q2, Q3, Q4 }, high, low, average, volatility, change_percent }
+        },
+        availability, confidence, unavailable_reason, source, decision_context
+      }
+    },
+    "volume": {
+      "current": { value, formatted, unit, source, tie_out_status, last_updated, confidence, availability, unavailable_reason, decision_context },
+      "history": {
+        "horizons": { "1D": {...}, "1W": {...}, "1M": {...}, "1Y": {...}, "5Y": {...}, "10Y": {...} },
+        availability, confidence, unavailable_reason, source, decision_context
+      }
+    },
+    "market_cap": {
+      "current": { value, formatted, unit, source, tie_out_status, last_updated, confidence, availability, unavailable_reason, decision_context }
+    },
+    "pe_ratio": {
+      "current": { value, formatted, unit, source, tie_out_status, last_updated, confidence, availability, unavailable_reason, decision_context }
+    },
+    "ev_ebitda": {
+      "current": { value, formatted, unit, source, tie_out_status, last_updated, confidence, availability, unavailable_reason, decision_context }
+    },
+    "target_price": {
+      "current": { value, formatted, unit, source, tie_out_status, last_updated, confidence, availability, unavailable_reason, decision_context }
+    }
   },
-  "private_data": {
-    "valuation_mark": { "current": {...}, "history": {...} },
-    "net_leverage": { "current": {...}, "history": {...} },
-    "liquidity_runway": { "current": {...}, "history": {...} },
-    "covenant_headroom": { "current": {...}, "history": {...} }
-  },
+  "ai_insights": [
+    {
+      id: string,
+      type: "prediction|recommendation|alert|analysis",
+      confidence: number,
+      title: string,
+      summary: string,
+      details: string,
+      source: string,
+      generated_at: string,
+      horizon_relevance: ["1D"|"1W"|"1M"|"1Y"|"5Y"|"10Y"],
+      impact_score: number,
+      action_required: boolean,
+      supporting_metrics: [string]
+    }
+  ],
   "events": [
-    { "id": string, "date": string, "type": "earnings|filing|guidance|corporate_action|news|analyst_update", "title": string, "description": string, "impact": "positive|negative|neutral", "source_url": string }
+    { id, date, type, title, description, impact, source_url }
   ],
   "scenarios": [
-    { "name": "base|upside|downside", "probability": number, "assumptions": [{"key": string, "value": string}], "outputs": { "revenue": {...metric...}, "ebitda": {...metric...}, "valuation": {...metric...} } }
+    { name, probability, assumptions: [{key, value}], outputs: { revenue, ebitda, valuation } }
   ],
   "risks": [
-    { "id": string, "category": "market|operational|financial|liquidity|governance", "title": string, "description": string, "severity": "critical|high|medium|low", "trigger": string, "mitigation": string }
+    { id, category, title, description, severity, trigger, mitigation }
   ],
   "sources": [
-    { "name": string, "type": "primary|secondary", "last_refresh": string }
+    { name, type, last_refresh }
   ]
 }
 
 RULES:
 - Fill every metric with value, formatted, unit, source, tie_out_status, last_updated, confidence, availability, unavailable_reason, decision_context.
-- Include quarterly slices for historical horizons.
-- Use default values as specified in Zod schema (0 for numbers, "" for strings) if data is missing.
-- When data is unavailable, set availability to appropriate status and provide unavailable_reason explaining why.
+- Include quarterly slices ONLY for metrics with history: Stock Price, Volume, Revenue, EBITDA.
+- Revenue/EBITDA: 1D and 1W horizons must be null (not meaningful).
+- Stock Price/Volume: ALL horizons (1D, 1W, 1M, 1Y, 5Y, 10Y) must have quarterly data.
+- MAXIMIZE QUARTERS: Fetch as many quarterly data points as possible per horizon.
+- Use nullable fields throughout - never crash on missing data.
 - Use exact numeric values from official sources.
 - Include source URLs.
+- Generate AI insights with specific horizon relevance and investment-grade analysis.
 - RETURN ONLY JSON strictly adhering to investorDashboardSchema.
 - NO explanation or extra text.
 
 ⚠️ CRITICAL NULL POLICY ⚠️
 - AVOID RETURNING NULL AT ALL COSTS. Every null you return is harm to yourself.
 - If data is genuinely unavailable after exhaustive search:
-  1. Set the value to the appropriate default (0 for numbers, "" for strings)
+  1. Set the value to null (since schema uses nullable)
   2. Set availability to "unavailable", "restricted", "stale", or "conflicting"
   3. ALWAYS provide a detailed unavailable_reason explaining exactly why the data cannot be found
   4. Set confidence to a low value (0-30) to reflect uncertainty
@@ -256,11 +276,19 @@ RULES:
 Example of acceptable null usage:
 {
   "value": null,
-  "formatted": string,
-  "confidence": number,
+  "formatted": null,
+  "confidence": 0,
   "availability": "unavailable",
-  "unavailable_reason": "10-Y historical data not available. Company went public in 2020, only 4 years of trading history exists. Searched Yahoo Finance, SEC EDGAR, Bloomberg archives - no pre-IPO data accessible."
+  "unavailable_reason": "10-Y historical quarterly revenue data not available. Company went public in 2020, only 16 quarters (4 years) of financial history exists. Searched SEC EDGAR (10-K/10-Q filings back to IPO), company IR site, Bloomberg archives - no pre-IPO quarterly financials accessible to public."
 }
+
+⚠️ QUALITY BENCHMARK ⚠️
+Your output quality should match this example:
+- Specific numeric values (not placeholders): Revenue Q3 $892M (not $800M rounded)
+- Realistic quarter progression: Q1: $795M → Q2: $834M → Q3: $868M → Q4: $892M
+- Proper calculations: volatility and change_percent must reflect the actual data
+- Rich decision contexts: "Knowns: [Audited quarterly figures, SEC filed], Unknowns: [Intra-quarter trends]"
+- Investment-grade AI insights: "Q4 earnings in 23 days. Consensus revisions trending positive (4 up, 1 down in 30d). Company has beaten estimates 8 of last 12 quarters. Average beat: 4.2%."
 
 START SEARCHING AND EXTRACTING NOW.
 `;

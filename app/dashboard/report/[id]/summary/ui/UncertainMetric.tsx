@@ -17,7 +17,7 @@ import {
 
 interface UncertainMetricProps {
   label: string;
-  metric?: MetricWithHistory | Metric | null;
+  metric?: MetricWithHistory | Metric | null | any;
   size?: "sm" | "md" | "lg";
   className?: string;
 }
@@ -232,7 +232,6 @@ export function UncertainMetric({
 
   // Render uncertainty state for non-available metrics
   const reason = currentMetric.unavailable_reason || getDefaultReason(availability, label);
-
 
   return (
     <div

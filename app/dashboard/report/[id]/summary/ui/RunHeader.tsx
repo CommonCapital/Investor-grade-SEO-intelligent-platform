@@ -61,7 +61,7 @@ export function RunHeader({ metadata, mode, onModeChange }: RunHeaderProps) {
                   : "bg-transparent text-foreground hover:bg-foreground/5"
               )}
             >
-              Public
+              Primary
             </button>
             <button
               onClick={() => onModeChange("private")}
@@ -72,7 +72,7 @@ export function RunHeader({ metadata, mode, onModeChange }: RunHeaderProps) {
                   : "bg-transparent text-foreground hover:bg-foreground/5"
               )}
             >
-              Private
+              Secondary
             </button>
           </div>
         </div>
